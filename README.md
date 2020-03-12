@@ -16,7 +16,7 @@ python3 ./substringSearch.py ./Data/test.fa GCGGGGCCGGCCGCGGGAGC 20
 
 ## Files Structure
 
-![FileStructure](/Users/lee-weihao/Google Drive/Mirror/Documents/Abroad_Application/CodingInterview/SubstringSearch/Figure/programStructure.png)
+![FileStructure](Figure/programStructure.png)
 
 **substringSearch.py** is program's entry point.
 
@@ -32,14 +32,12 @@ python3 ./substringSearch.py ./Data/test.fa GCGGGGCCGGCCGCGGGAGC 20
 
 ## Results
 
-![Results](/Users/lee-weihao/Google Drive/Mirror/Documents/Abroad_Application/CodingInterview/SubstringSearch/Figure/Result.png)
+![Results](Figure/Result.png)
 
 **Problem 1.**
-
 GCGGGGCCGGCCGCGGGAGC only appears *1* time.
 
 **Problem 2.**
-
 *AAAAAAAAAAAAAAAAAAAA* has highest occurrences about 1965 times.
 
 
@@ -48,14 +46,12 @@ GCGGGGCCGGCCGCGGGAGC only appears *1* time.
 
 **Problem 2.**
 
-*Advantage*
-
+*Advantage* - 
 Because of Python, its dictionary is implemented by hashTable. Therefore, I assume that the complexity of searching value by key is O(1).  And the complexity of string splicing is also O(1). 
 
 
 
-*Disadvantage*
-
+*Disadvantage* - 
 The algorithm I writen spent most of time on searching whether substring already existed in dictionary by comparing the hashCode. The worst case of hashCode searching is O(n^2). Moreover, this algorithm occupys large amout of memory, because it stores all substring results.
 
 
