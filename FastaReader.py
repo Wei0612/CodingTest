@@ -1,6 +1,7 @@
 import os
 from Sequence import Sequence
 from collections import defaultdict
+from KnuthMorrisPratt import KnuthMorrisPratt
 
 class FastaReader():
     def __init__(self):
@@ -57,8 +58,14 @@ class FastaReader():
 
     # problem 1. Calculate the #occurrence for a given 20-mer subsequence GCGGGGCCGGCCGCGGGAGC
     def numberOfSubstring(self, substring: str) -> None:
-        totalOccurrence = 0
-        return totalOccurrence
+        allOccurrence = 0
+        kmp = KnuthMorrisPratt()
+        
+        for seq in self.seqs:
+            sequence = seq.sequence
+            allOccurrence += kmp.searchNumOfPattern(sequence, substring)
+        
+        return allOccurrence
 
     
     # problem 2. Find the 20-mer subsequence with the highest occurrences

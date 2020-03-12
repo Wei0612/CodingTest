@@ -11,32 +11,30 @@ Please write a simple program to perform the following tasks:
 import sys, os
 from FastaReader import FastaReader  
 from collections import defaultdict
-from KnuthMorrisPratt import KnuthMorrisPratt
+
 def main():
     fastaDir = os.path.abspath(sys.argv[1])  # file directory
     fastaReader = FastaReader()
     fastaReader.readFastaFile(fastaDir)     # read file
     
     # PROBLEM 1. (Detail Algorithm implemented in Sequence.py (subStringSearch() function))
-    searchString = "GCGGGGCCGGCCGCGGGAGC"
+    searchString = sys.argv[2]
     numOfSubstring = fastaReader.numberOfSubstring(searchString)
     print(f"String, {searchString}, appears {numOfSubstring} times in file {fastaReader.getFileName()}")
-    kmp = KnuthMorrisPratt()
-    print(f"{kmp.createPrefixTable(searchString)}")
-    print(f"{kmp.partial(searchString)}")
-    # # PROBLEM 2. (Detail Algorithm implemented in FastaReader.py ())
-    # lengthOfString = 20
-    # highestFreqString, appearTimes, subseqCounter = fastaReader.findHighestOccurrence(lengthOfString)
-    # # output the all substring counts in substringCount.csv
-    # with open(os.path.join(os.path.abspath("./"), "Output", "substringCountLarger10.csv"), 'w') as outputFile:
-    #     # column names
-    #     outputFile.write("Subsequence,Counts\n")
 
-    #     for subseq, counter in subseqCounter.items():
-    #         if counter >= 10:
-    #             outputFile.write(f"{subseq},{counter}\n")
+    # PROBLEM 2. (Detail Algorithm implemented in FastaReader.py ())
+    lengthOfString = int(sys.argv[3])
+    highestFreqString, appearTimes, subseqCounter = fastaReader.findHighestOccurrence(lengthOfString)
+    # output the all substring counts in substringCount.csv
+    with open(os.path.join(os.path.abspath("./"), "Output", "substringCountLarger10.csv"), 'w') as outputFile:
+        # column names
+        outputFile.write("Subsequence,Counts\n")
 
-    # print(f"{lengthOfString}-mer subsequence, {highestFreqString}, has highest occurrences, {appearTimes} times, in file {fastaReader.getFileName()}")
+        for subseq, counter in subseqCounter.items():
+            if counter >= 10:
+                outputFile.write(f"{subseq},{counter}\n")
+
+    print(f"{lengthOfString}-mer subsequence, {highestFreqString}, has highest occurrences, {appearTimes} times, in file {fastaReader.getFileName()}")
 
 
 if __name__ == "__main__":

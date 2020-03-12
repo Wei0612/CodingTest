@@ -25,27 +25,144 @@
 
 ##### substringSearch.py
 
-```python
-import sys
-from FastaReader import FastaReader  
-
-def main():
-    fastaDir = sys.argv[1]                  # file directory
-    fastaReader = FastaReader()
-    fastaReader.readFastaFile(fastaDir)     # read file
-
-    # PROBLEM 1. (Detail Algorithm implemented in Sequence.py (subStringSearch() function))
-    searchString = "GCGGGGCCGGCCGCGGGAGC"
-    numOfSubstring = fastaReader.numberOfSubstring(searchString)
-    print(f"String, {searchString}, appears {numOfSubstring} times in file {fastaReader.getFileName()}")
-
-    # PROBLEM 2. (Detail Algorithm implemented in FastaReader.py ())
-    highestFreqString, appearTimes = fastaReader.findHighestOccurrence(20)
-    print(f"20-mer subsequence, {highestFreqString}, has highest occurrences, {appearTimes} times, in file {fastaReader.getFileName()}")
-
-
-if __name__ == "__main__":
-    main()
+```py
+i
 ```
 
+##### FastaReader.py
 
+```py
+import os
+from Sequence import Sequence
+from collections import defaultdict
+from KnuthMorrisPratt import KnuthMorrisPratt
+
+class FastaReader():
+    def __init__(self):
+        self.dir = ""
+        self.fileDir = ""
+        self.fileName = ""
+        self.seqs = []  # save sequence information and sequences
+        self.numOfSeqs = 0
+
+    # getter
+    def getFileName(self):
+        return self.fileName
+
+    # load fasta file
+    def readFastaFile(self, fileDir) -> None:
+        self.fileDir = fileDir
+        self.dir = os.path.dirname(fileDir)
+        self.fileName = os.path.basename(fileDir)
+
+        # read file
+        with open(self.fileDir, 'r') as inputFile:
+            content = inputFile.read()
+            splitedContent = content.split('>')  # split sequences by '>'
+            splitedContent.pop(0) # remove first element "" at index 0
+
+            for seqContent in splitedContent:
+                # remove whitespace and newline and then split string by newline
+                seqContent = seqContent.rstrip().split("\n")
+
+                # save sequence info and sequence
+                seqInfo = seqContent[0]
+                sequence = "".join(seqContent[1:])
+
+                # create Sequence object
+                sequence = Sequence(seqInfo, sequence)
+
+                # store sequence into list
+                self.seqs.append(sequence)
+                self.numOfSeqs += 1
+                
+        # report how many reads loaded
+        self.numberOfSequences()
+
+    #print amout of sequnces in fasta file
+    def numberOfSequences(self) -> None:
+        print(f'There are {self.numOfSeqs} seuqneces in {self.fileName}')
+
+    # print element by index
+    def printSeqInfoByIndex(self, index: int) -> None:
+        if index >= len(self.seqs):
+            print(f"index {index} is out of range of list! There are only {self.numOfSeqs} elements in {self.fileName}")
+        else:
+            print(self.seqs[index])
+
+    # problem 1. Calculate the #occurrence for a given 20-mer subsequence GCGGGGCCGGCCGCGGGAGC
+    def numberOfSubstring(self, substring: str) -> None:
+        allOccurrence = 0
+        kmp = KnuthMorrisPratt()
+        
+        for seq in self.seqs:
+            sequence = seq.sequence
+            allOccurrence += kmp.searchNumOfPattern(sequence, substring)
+        
+        return allOccurrence
+
+    
+    # problem 2. Find the 20-mer subsequence with the highest occurrences
+    def findHighestOccurrence(self, lengthOfString: int) -> str:
+        highestFreqString = ""
+        appearTimes = 0
+        subseqCounter = defaultdict(int)
+
+        # Owing to dictionary is implemented by hashTable,
+        # I assume that the complexity of using key to get value is O(1)
+        # iterate the seqs list to gather single sequence
+        for seq in self.seqs:
+            sequence = seq.sequence
+
+            # if sequence length is 51 and length of string is 20-mer,
+            # total substring is 51-20+1=32
+            for i in range(0, len(sequence) - lengthOfString + 1, 1):
+                subsequence = sequence[i: i + lengthOfString]
+                subseqCounter[subsequence] += 1
+
+                if subseqCounter[subsequence] > appearTimes:
+                    highestFreqString = subsequence
+                    appearTimes = subseqCounter[subsequence]
+
+        return [highestFreqString, appearTimes, subseqCounter]
+
+```
+
+##### Sequence.py
+
+```py
+class Sequence():
+    # constructor
+    def __init__(self, seqInfo: str, sequence: str):
+        # sequnce information
+        seqInfo = seqInfo.rstrip().split(' ')
+        self.name = seqInfo[0]
+        self.range = seqInfo[1].split('=')[1]           # ex. seqInfo[1] -> range=chr1:713916-714525
+        self.pad_5 = seqInfo[2].split('=')[1]           # ex. seqInfo[2] -> 5'pad=0
+        self.pad_3 = seqInfo[3].split('=')[1]           # ex. seqInfo[3] -> 3'pad=0
+        self.strand = seqInfo[4].split('=')[1]          # ex. seqInfo[4] -> strand=+
+        self.repeatMasking = seqInfo[5].split('=')[1]  # ex. seqInfo[5] -> repeatMasking=none
+        
+        # sequence
+        self.sequence = sequence
+
+    # printable
+    def __str__(self):
+        return f'Name: {self.name}\nSequence: {self.sequence}'
+
+    def __repr__(self):
+        return f'object: {self.name}\ntype: {type(self)}\naddress: {id(self)}'
+
+    def printDetails(self):
+        print(
+        f"""
+        Name: {self.name}
+        Range: {self.range}
+        5'pad: {self.pad_5}
+        3'pad: {self.pad_3}
+        strand: {self.strand}
+        RepeatMasking: {self.repeatMasking}
+        """ )
+```
+
+##### K

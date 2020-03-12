@@ -1,5 +1,3 @@
-from KnuthMorrisPratt import KnuthMorrisPratt
-
 class Sequence():
     # constructor
     def __init__(self, seqInfo: str, sequence: str):
@@ -32,8 +30,3 @@ class Sequence():
         strand: {self.strand}
         RepeatMasking: {self.repeatMasking}
         """ )
-    
-    # problem 1. Calculate the #occurrence for a given 20-mer subsequence GCGGGGCCGGCCGCGGGAGC
-    def numOfSubstringSearch(self, substring: str) -> int:
-        kmp = KnuthMorrisPratt()
-        return kmp.searchNumOfPattern(self.sequence, substring)
