@@ -78,6 +78,8 @@ def main():
     # PROBLEM 2. (Detail Algorithm implemented in FastaReader.py ())
     lengthOfString = int(sys.argv[3])
     highestFreqString, appearTimes, subseqCounter = fastaReader.findHighestOccurrence(lengthOfString)
+    print(f"Problem 2: {lengthOfString}-mer subsequence, {highestFreqString}, has highest occurrences, {appearTimes} times, in file {fastaReader.getFileName()}")
+    
     # output the all substring counts in substringCount.csv
     with open(os.path.join(os.path.abspath("./"), "Output", "substringCountLarger10.csv"), 'w') as outputFile:
         # column names
@@ -86,9 +88,6 @@ def main():
         for subseq, counter in subseqCounter.items():
             if counter >= 10:
                 outputFile.write(f"{subseq},{counter}\n")
-
-    print(f"Problem 2: {lengthOfString}-mer subsequence, {highestFreqString}, has highest occurrences, {appearTimes} times, in file {fastaReader.getFileName()}")
-
 
 if __name__ == "__main__":
     main()
