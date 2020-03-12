@@ -1,9 +1,11 @@
 import os
 from Sequence import Sequence
+from collections import defaultdict
 
 class FastaReader():
     def __init__(self):
         self.dir = ""
+        self.fileDir = ""
         self.fileName = ""
         self.seqs = []  # save sequence information and sequences
         self.numOfSeqs = 0
@@ -13,12 +15,13 @@ class FastaReader():
         return self.fileName
 
     # load fasta file
-    def readFastaFile(self, dir) -> None:
-        self.dir = dir
-        self.fileName = os.path.basename(dir)
+    def readFastaFile(self, fileDir) -> None:
+        self.fileDir = fileDir
+        self.dir = os.path.dirname(fileDir)
+        self.fileName = os.path.basename(fileDir)
 
         # read file
-        with open(dir, 'r') as inputFile:
+        with open(self.fileDir, 'r') as inputFile:
             content = inputFile.read()
             splitedContent = content.split('>')  # split sequences by '>'
             splitedContent.pop(0) # remove first element "" at index 0
@@ -62,4 +65,22 @@ class FastaReader():
     def findHighestOccurrence(self, lengthOfString: int) -> str:
         highestFreqString = ""
         appearTimes = 0
-        return [highestFreqString, appearTimes]
+        subseqCounter = defaultdict(int)
+
+        # Owing to dictionary is implemented by hashTable,
+        # I assume that the complexity of using key to get value is O(1)
+        # iterate the seqs list to gather single sequence
+        for seq in self.seqs:
+            sequence = seq.sequence
+
+            # if sequence length is 51 and length of string is 20-mer,
+            # total substring is 51-20+1=32
+            for i in range(0, len(sequence) - lengthOfString + 1, 1):
+                subsequence = sequence[i: i + lengthOfString]
+                subseqCounter[subsequence] += 1
+
+                if subseqCounter[subsequence] > appearTimes:
+                    highestFreqString = subsequence
+                    appearTimes = subseqCounter[subsequence]
+
+        return [highestFreqString, appearTimes, subseqCounter]

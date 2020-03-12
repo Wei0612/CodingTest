@@ -2,16 +2,16 @@
 
 ## Questions
 
-**Please write a simple program to perform the following tasks:** </br>
+**Please write a simple program to perform the following tasks:** 
 
-1. Calculate the #occurrence for a given 20-mer subsequence GCGGGGCCGGCCGCGGGAGC</br>
-2. Find the 20-mer subsequence with the highest occurrences.</br>
+1. Calculate the #occurrence for a given 20-mer subsequence GCGGGGCCGGCCGCGGGAGC
+2. Find the 20-mer subsequence with the highest occurrences.
 
 
 
 ## Files Structure
 
-![Program and Files Structure](/Users/lee-weihao/Google Drive/Mirror/Documents/Abroad_Application/CodingInterview/SubstringSearch/Figure/programStructure.png)
+
 
 **substringSearch.py** is program's entry point.
 
