@@ -7,26 +7,95 @@
 1. Calculate the #occurrence for a given 20-mer subsequence GCGGGGCCGGCCGCGGGAGC
 2. Find the 20-mer subsequence with the highest occurrences.
 
+## Usage
 
+```shell
+# python3 ./substringSearch.py data substring n-mer
+python3 ./substringSearch.py ./Data/test.fa GCGGGGCCGGCCGCGGGAGC 20
+```
 
 ## Files Structure
 
-
+![FileStructure](/Users/lee-weihao/Google Drive/Mirror/Documents/Abroad_Application/CodingInterview/SubstringSearch/Figure/programStructure.png)
 
 **substringSearch.py** is program's entry point.
 
 **FastaReader.py** is a class for reading fasta file and helping calculating the highest occurrences of 20-mer subsequences as well as #occurrence for a given 20-mer subsequence in the fasta file. (Problem 2 is answered in this file's `findHighestOccurrence()` function)
 
-**Sequence.py** is a class for reading sequence information and calculating number of given subsequence in a sequence. (Problem 1 is answered in this file's `numOfSubstringSearch()` function)
+**KnuthMorrisPratt.py** is a class which implements the Knuth-Morris-Pratt algorithm for substring searching (Problem 1's answer).
+
+**Sequence.py** is a class for reading sequence information.
+
+**Output/substringCountLarger10.csv** is a csv file which contain substrings and their count. (Only preserve the substring which counts is larger than 10)
+
+
 
 ## Results
+
+![Results](/Users/lee-weihao/Google Drive/Mirror/Documents/Abroad_Application/CodingInterview/SubstringSearch/Figure/Result.png)
+
+**Problem 1.**
+
+GCGGGGCCGGCCGCGGGAGC only appears *1* time.
+
+**Problem 2.**
+
+*AAAAAAAAAAAAAAAAAAAA* has highest occurrences about 1965 times.
+
+
+
+### Explanation of my solution
+
+**Problem 2.**
+
+*Advantage*
+
+Because of Python, its dictionary is implemented by hashTable. Therefore, I assume that the complexity of searching value by key is O(1).  And the complexity of string splicing is also O(1). 
+
+
+
+*Disadvantage*
+
+The algorithm I writen spent most of time on searching whether substring already existed in dictionary by comparing the hashCode. The worst case of hashCode searching is O(n^2). Moreover, this algorithm occupys large amout of memory, because it stores all substring results.
+
+
 
 ## Programs
 
 ##### substringSearch.py
 
 ```py
-i
+import sys, os
+from FastaReader import FastaReader  
+from collections import defaultdict
+
+def main():
+    fastaDir = os.path.abspath(sys.argv[1])  # file directory
+    fastaReader = FastaReader()
+    fastaReader.readFastaFile(fastaDir)     # read file
+    
+    # PROBLEM 1. (Detail Algorithm implemented in Sequence.py (subStringSearch() function))
+    searchString = sys.argv[2]
+    numOfSubstring = fastaReader.numberOfSubstring(searchString)
+    print(f"Problem 1: String, {searchString}, appears {numOfSubstring} times in file {fastaReader.getFileName()}")
+
+    # PROBLEM 2. (Detail Algorithm implemented in FastaReader.py ())
+    lengthOfString = int(sys.argv[3])
+    highestFreqString, appearTimes, subseqCounter = fastaReader.findHighestOccurrence(lengthOfString)
+    # output the all substring counts in substringCount.csv
+    with open(os.path.join(os.path.abspath("./"), "Output", "substringCountLarger10.csv"), 'w') as outputFile:
+        # column names
+        outputFile.write("Subsequence,Counts\n")
+
+        for subseq, counter in subseqCounter.items():
+            if counter >= 10:
+                outputFile.write(f"{subseq},{counter}\n")
+
+    print(f"Problem 2: {lengthOfString}-mer subsequence, {highestFreqString}, has highest occurrences, {appearTimes} times, in file {fastaReader.getFileName()}")
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 ##### FastaReader.py
@@ -165,4 +234,48 @@ class Sequence():
         """ )
 ```
 
-##### K
+##### KnuthMorrisPratt.py
+
+```py
+class KnuthMorrisPratt:
+    def createPrefixTable(self, subsequence: str):
+        # implement Knuth–Morris–Pratt algorithm
+        # create prefixTable
+        # indicator i j
+        # index  = [0 1 2 3 4 5 6 7]
+        # substr = [G C G G G G C C]
+        # prefix = [0 0 1 . . . . .]
+        prefixTable = [0] # index 1 always is 0
+        i = 0
+        j = 1
+        while j < len(subsequence):
+            if subsequence[j] == subsequence[i]:
+                i += 1
+                prefixTable.append(i)
+                j += 1
+            elif i > 0:
+                i = prefixTable[i - 1]
+            else:
+                prefixTable.append(0)
+                j += 1
+
+        return prefixTable
+
+    def searchNumOfPattern(self, content: str, pattern: str) -> int:
+        occurrnceSites = [] # store perfect match index
+        prefixTable = self.createPrefixTable(pattern)  # create prefixTable
+        j = 0   # index of pattern
+
+        for i in range(len(content)):
+            while j > 0 and content[i] != pattern[j]:
+                j = prefixTable[j - 1]
+
+            if content[i] == pattern[j]:
+                j += 1
+
+            if j == len(pattern): 
+                occurrnceSites.append(i - (j - 1))
+                j = prefixTable[j - 1]
+
+        return len(occurrnceSites)
+```
