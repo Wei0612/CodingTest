@@ -26,7 +26,7 @@ python3 ./substringSearch.py ./Data/test.fa GCGGGGCCGGCCGCGGGAGC 20
 
 **Sequence.py** is a class for reading sequence information.
 
-**Output/substringCountLarger10.csv** is a csv file which contain substrings and their count. (Only preserve the substring which counts is larger than 10)
+**Output/substringCountLarger10.csv** is a csv file which contains substrings and their count. (Only preserve the substring which counts are larger than 10)
 
 
 
