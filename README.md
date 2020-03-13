@@ -52,8 +52,7 @@ Because of Python, its dictionary is implemented by hashTable. Therefore, I assu
 
 
 *Disadvantage* - 
-The algorithm I writen spent most of time on searching whether substring already existed in dictionary by comparing the hashCode. The worst case of hashCode searching is O(n^2). Moreover, this algorithm occupys large amout of memory, because it stores all substring results.
-
+This algorithm occupys large amout of memory, because it stores all substring results.
 
 
 ## Programs
